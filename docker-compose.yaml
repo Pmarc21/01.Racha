@@ -17,8 +17,8 @@ services:
 
   frontend:
     build:
-      context: ./frontend
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: docker/frontend/Dockerfile
     container_name: racha_frontend
     ports:
       - "3000:3000"
