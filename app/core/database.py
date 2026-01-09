@@ -1,7 +1,8 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from models.user import UserBase
-from models.action import Base as ActionBase
+from models.base import Base
+from models.action import Action
+from models.user import User
 
 DATABASE_URL = "postgresql://racha:racha@db:5432/racha"  # Ajusta según tu config
 
@@ -16,5 +17,4 @@ def get_db():
         db.close()
 
 # Para crear las tablas al iniciar
-UserBase.metadata.create_all(bind=engine)
-ActionBase.metadata_create_all(bind=engine)
+Base.metadata.create_all(bind=engine)

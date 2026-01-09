@@ -1,7 +1,7 @@
 docker-up:
-	docker-compose up -d --build
+	COMPOSE_PROJECT_NAME=racha docker-compose -f docker-compose.yaml up -d --build
 docker-down:
-	docker-compose down
+	COMPOSE_PROJECT_NAME=racha docker-compose -f docker-compose.yaml down
 run-db:
 	docker run -d \
 		--name my_postgres \
@@ -10,3 +10,8 @@ run-db:
 		-e POSTGRES_PASSWORD=$(DB_PASSWORD) \
 		-p $(DB_PORT):5432 \
 		postgres:15
+docker-reload:
+	@echo "Starting all services..."
+	COMPOSE_PROJECT_NAME=racha docker-compose -f docker-compose.yaml stop api
+	COMPOSE_PROJECT_NAME=racha docker-compose -f docker-compose.yaml up -d api
+	@echo "Rest container reloaded successfully."
