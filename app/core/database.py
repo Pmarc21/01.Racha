@@ -5,7 +5,7 @@ from fastapi_users.db import SQLAlchemyBaseUserTableUUID, SQLAlchemyUserDatabase
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 from sqlalchemy.orm import DeclarativeBase
 
-DATABASE_URL = "postgresql://racha:racha@db:5432/racha"
+DATABASE_URL = "postgresql+asyncpg://racha:racha@db:5432/racha"
 
 
 class Base(DeclarativeBase):
