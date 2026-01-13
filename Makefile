@@ -12,6 +12,9 @@ run-db:
 		postgres:15
 docker-reload:
 	@echo "Starting all services..."
-	COMPOSE_PROJECT_NAME=racha docker-compose -f docker-compose.yaml stop api
+	COMPOSE_PROJECT_NAME=racha docker-compose -f docker-compose.yaml down api
 	COMPOSE_PROJECT_NAME=racha docker-compose -f docker-compose.yaml up -d api
 	@echo "Rest container reloaded successfully."
+
+docker-logs:
+	COMPOSE_PROJECT_NAME=racha docker-compose -f docker-compose.yaml logs -f api

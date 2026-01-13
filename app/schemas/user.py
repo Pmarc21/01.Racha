@@ -1,12 +1,15 @@
-from pydantic import BaseModel
+import uuid
 
-class UserBase(BaseModel):
-    username: str
-    email: str
+from fastapi_users import schemas
 
-class UserResponse(UserBase):
-    id: int
-    is_active: bool
 
-    class Config:
-        from_attributes = True  # Para convertir ORM a dict
+class UserRead(schemas.BaseUser[uuid.UUID]):
+    pass
+
+
+class UserCreate(schemas.BaseUserCreate):
+    pass
+
+
+class UserUpdate(schemas.BaseUserUpdate):
+    pass

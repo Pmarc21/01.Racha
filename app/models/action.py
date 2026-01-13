@@ -12,7 +12,6 @@ class Action(Base):
     name = Column(String(50), unique=True, index=True, nullable=False)
     description = Column(String(100), unique=True, index=True, nullable=False)
     points = Column(Integer, nullable=False)
-    user = Column(User)
     created_at = Column(DateTime, default=datetime.now())
 
     user = relationship("User", back_populates="actions")
