@@ -9,7 +9,7 @@ run-db:
 		-e POSTGRES_USER=$(DB_USER) \
 		-e POSTGRES_PASSWORD=$(DB_PASSWORD) \
 		-p $(DB_PORT):5432 \
-		postgres:15
+		postgres:16
 docker-reload:
 	@echo "Starting all services..."
 	COMPOSE_PROJECT_NAME=racha docker-compose -f docker-compose.yaml down api

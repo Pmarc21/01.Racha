@@ -9,4 +9,4 @@ ENV POSTGRES_DB=racha \
 COPY init/ /docker-entrypoint-initdb.d/
 
 # Puerto estándar
-EXPOSE 5432
+EXPOSE 5433

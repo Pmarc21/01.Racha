@@ -40,7 +40,7 @@ services:
       - postgres_data:/var/lib/postgresql/data
       - ./docker/db/init.sql:/docker-entrypoint-initdb.d/init.sql
     ports:
-      - "5432:5432"
+      - "5433:5432"
   
   dozzle:
     image: amir20/dozzle:latest
