@@ -3,6 +3,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from api.v1.api import api_router
 from contextlib import asynccontextmanager
 from core.database import User, create_db_and_tables
+import models.action  # noqa: F401 - register models for create_all
+import models.daily_points  # noqa: F401
 from schemas.user import UserCreate, UserRead, UserUpdate
 from core.users import auth_backend, fastapi_users, current_active_user
 
@@ -17,7 +19,7 @@ app = FastAPI(title="Racha API", lifespan=lifespan)
 # Configurar CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],  # URL del frontend
+    allow_origins=["http://localhost:5173"],  # URL del frontend
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

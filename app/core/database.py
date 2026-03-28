@@ -3,7 +3,7 @@ from collections.abc import AsyncGenerator
 from fastapi import Depends
 from fastapi_users.db import SQLAlchemyBaseUserTableUUID, SQLAlchemyUserDatabase
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
-from sqlalchemy.orm import DeclarativeBase
+from sqlalchemy.orm import DeclarativeBase, relationship
 
 DATABASE_URL = "postgresql+asyncpg://racha:racha@db:5432/racha"
 
@@ -13,7 +13,8 @@ class Base(DeclarativeBase):
 
 
 class User(SQLAlchemyBaseUserTableUUID, Base):
-    pass
+    actions = relationship("Action", back_populates="user")
+    daily_points = relationship("DailyPoints", back_populates="user")
 
 
 engine = create_async_engine(DATABASE_URL)

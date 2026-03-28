@@ -1,32 +1,10 @@
-# ---------- Build ----------
-FROM node:25-alpine AS build
-
+FROM node:25-alpine
 WORKDIR /app
-
 # Copiamos dependencias
 COPY frontend/package.json ./
 COPY frontend/package-lock.json ./
 RUN npm install
-
-# Copiamos el resto del proyecto
 COPY frontend .
 
-# Build de producción
-RUN npm run build
-
-
-# ---------- Serve ----------
-FROM nginx:alpine
-
-# Eliminamos config por defecto
-RUN rm /etc/nginx/conf.d/default.conf
-
-# Copiamos nuestra config
-COPY frontend/nginx.conf /etc/nginx/conf.d/default.conf
-
-# Copiamos el build de Vite
-COPY --from=build /app/dist /usr/share/nginx/html
-
-EXPOSE 80
-
-CMD ["nginx", "-g", "daemon off;"]
+EXPOSE 5173
+CMD ["npm", "run", "dev"]

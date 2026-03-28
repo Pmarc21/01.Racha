@@ -1,15 +1,22 @@
+import { Container, Title, Text, Button, Group } from "@mantine/core";
+
 export default function App() {
   const logout = () => {
     localStorage.removeItem("access_token");
-    localStorage.removeItem("refresh_token");
     window.location.reload();
   };
 
   return (
-    <div style={{ padding: 20 }}>
-      <h1>Racha</h1>
-      <p>App principal</p>
-      <button onClick={logout}>Logout</button>
-    </div>
+    <Container size="sm" my={40}>
+      <Group justify="space-between" align="center">
+        <Title order={1}>Racha</Title>
+        <Button variant="subtle" color="gray" onClick={logout}>
+          Cerrar sesión
+        </Button>
+      </Group>
+      <Text c="dimmed" mt="md">
+        App principal
+      </Text>
+    </Container>
   );
 }
