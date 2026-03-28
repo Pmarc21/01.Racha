@@ -1,10 +1,11 @@
 import { useState } from "react";
-import { Container, Title, Button, Group, Box } from "@mantine/core";
+import { Container, Title, Button, Group } from "@mantine/core";
 import Dashboard from "./components/Dashboard";
 import Calendar from "./components/Calendar";
+import MenuPage from "./components/MenuPage";
 import BottomNav from "./components/BottomNav";
 
-export type Page = "main" | "calendar";
+export type Page = "main" | "calendar" | "menu";
 
 export default function App() {
   const [page, setPage] = useState<Page>("main");
@@ -16,14 +17,16 @@ export default function App() {
 
   return (
     <>
-      <Container size="xs" py="xl" pb={80}>
+      <Container size={page === "menu" ? "md" : "xs"} py="xl" pb={80}>
         <Group justify="space-between" align="center" mb="xl">
           <Title order={1}>Racha</Title>
           <Button variant="subtle" color="gray" size="sm" onClick={logout}>
             Cerrar sesión
           </Button>
         </Group>
-        {page === "main" ? <Dashboard /> : <Calendar />}
+        {page === "main" && <Dashboard />}
+        {page === "calendar" && <Calendar />}
+        {page === "menu" && <MenuPage />}
       </Container>
       <BottomNav active={page} onChange={setPage} />
     </>

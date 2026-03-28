@@ -6,6 +6,8 @@ from core.database import User, create_db_and_tables
 import models.action  # noqa: F401 - register models for create_all
 import models.daily_points  # noqa: F401
 import models.action_completion  # noqa: F401
+import models.recipe  # noqa: F401
+import models.weekly_menu  # noqa: F401
 from schemas.user import UserCreate, UserRead, UserUpdate
 from core.users import auth_backend, fastapi_users, current_active_user
 

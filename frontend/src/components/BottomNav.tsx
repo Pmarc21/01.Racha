@@ -9,6 +9,7 @@ type Props = {
 const tabs: { key: Page; label: string; icon: string }[] = [
   { key: "main", label: "Inicio", icon: "🏠" },
   { key: "calendar", label: "Calendario", icon: "📅" },
+  { key: "menu", label: "Menú", icon: "🍽️" },
 ];
 
 export default function BottomNav({ active, onChange }: Props) {
@@ -28,7 +29,7 @@ export default function BottomNav({ active, onChange }: Props) {
         background: "var(--mantine-color-body)",
       }}
     >
-      <Group grow gap={0} py="xs" px="md" maw={420} mx="auto">
+      <Group grow gap={0} py="xs" px="md" maw={500} mx="auto">
         {tabs.map((tab) => (
           <UnstyledButton
             key={tab.key}
