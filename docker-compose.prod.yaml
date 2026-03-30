@@ -1,0 +1,59 @@
+services:
+  caddy:
+    image: caddy:2-alpine
+    container_name: racha_caddy
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./docker/caddy/Caddyfile:/etc/caddy/Caddyfile
+      - caddy_data:/data
+      - caddy_config:/config
+    environment:
+      - DOMAIN=${DOMAIN}
+    depends_on:
+      - api
+      - frontend
+
+  api:
+    build:
+      context: .
+      dockerfile: docker/api/Dockerfile.prod
+    container_name: racha_api
+    restart: unless-stopped
+    environment:
+      - DATABASE_URL=postgresql+asyncpg://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
+      - SECRET_KEY=${SECRET_KEY}
+      - CORS_ORIGINS=https://${DOMAIN}
+    depends_on:
+      - db
+    expose:
+      - "8000"
+
+  frontend:
+    build:
+      context: .
+      dockerfile: docker/frontend/Dockerfile_prod
+    container_name: racha_frontend
+    restart: unless-stopped
+    expose:
+      - "80"
+
+  db:
+    image: postgres:16
+    container_name: racha_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    expose:
+      - "5432"
+
+volumes:
+  postgres_data:
+  caddy_data:
+  caddy_config:

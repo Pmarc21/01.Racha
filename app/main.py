@@ -1,3 +1,4 @@
+import os
 from fastapi import FastAPI, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from api.v1.api import api_router
@@ -22,7 +23,7 @@ app = FastAPI(title="Racha API", lifespan=lifespan)
 # Configurar CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173"],  # URL del frontend
+    allow_origins=os.environ.get("CORS_ORIGINS", "http://localhost:5173").split(","),
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

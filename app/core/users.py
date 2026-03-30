@@ -11,7 +11,9 @@ from fastapi_users.db import SQLAlchemyUserDatabase
 
 from core.database import User, get_user_db
 
-SECRET = "SECRET"
+import os
+
+SECRET = os.environ.get("SECRET_KEY", "SECRET")
 
 
 class UserManager(UUIDIDMixin, BaseUserManager[User, uuid.UUID]):
