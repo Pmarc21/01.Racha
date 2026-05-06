@@ -84,7 +84,7 @@ function Login({ onLoginSuccess }: AuthScreensProps) {
   );
 }
 
-function Register({ onLoginSuccess }: AuthScreensProps) {
+function Register({ }: AuthScreensProps) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
