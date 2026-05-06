@@ -8,7 +8,7 @@ class Recipe(Base):
     __tablename__ = "recipes"
 
     id = Column(Integer, primary_key=True, index=True)
-    user_id = Column(UUID(as_uuid=True), ForeignKey("user.id"), nullable=False)
+    user_id = Column(UUID(as_uuid=True), ForeignKey("app_user.id"), nullable=False)
     name = Column(String(100), nullable=False)
     meal_type = Column(String(20), nullable=False, default="comida")  # comida, cena
     notes = Column(Text, nullable=True, default="")

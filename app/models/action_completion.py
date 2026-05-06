@@ -11,6 +11,6 @@ class ActionCompletion(Base):
     )
 
     id = Column(Integer, primary_key=True, index=True)
-    user_id = Column(UUID(as_uuid=True), ForeignKey("user.id"), nullable=False)
+    user_id = Column(UUID(as_uuid=True), ForeignKey("app_user.id"), nullable=False)
     action_key = Column(String(50), nullable=False)
     date = Column(Date, default=date.today, nullable=False)

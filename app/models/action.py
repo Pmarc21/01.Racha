@@ -10,7 +10,7 @@ class Action(Base):
     __tablename__ = "actions"
 
     id = Column(Integer, primary_key=True, index=True)
-    user_id = Column(ForeignKey("user.id"), nullable=False)
+    user_id = Column(ForeignKey("app_user.id"), nullable=False)
     name = Column(String(50), unique=True, index=True, nullable=False)
     description = Column(String(100), unique=True, index=True, nullable=False)
     points = Column(Integer, nullable=False)

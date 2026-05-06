@@ -11,7 +11,7 @@ class WeeklyMenu(Base):
     )
 
     id = Column(Integer, primary_key=True, index=True)
-    user_id = Column(UUID(as_uuid=True), ForeignKey("user.id"), nullable=False)
+    user_id = Column(UUID(as_uuid=True), ForeignKey("app_user.id"), nullable=False)
     week_start = Column(Date, nullable=False)
     day_of_week = Column(Integer, nullable=False)  # 0=Monday, 6=Sunday
     meal_type = Column(String(20), nullable=False)  # comida, cena

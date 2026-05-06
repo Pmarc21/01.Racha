@@ -15,6 +15,7 @@ class Base(DeclarativeBase):
 
 
 class User(SQLAlchemyBaseUserTableUUID, Base):
+    __tablename__ = "app_user"
     actions = relationship("Action", back_populates="user")
     daily_points = relationship("DailyPoints", back_populates="user")
 

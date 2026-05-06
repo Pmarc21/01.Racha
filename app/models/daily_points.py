@@ -8,7 +8,7 @@ class DailyPoints(Base):
     __tablename__ = "daily_points"
 
     id = Column(Integer, primary_key=True, index=True)
-    user_id = Column(ForeignKey("user.id"), nullable=False)
+    user_id = Column(ForeignKey("app_user.id"), nullable=False)
     date = Column(DateTime, default=datetime.now, nullable=False)
     total_points = Column(Integer, default=0, nullable=False)
 
