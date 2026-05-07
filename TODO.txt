@@ -1,0 +1,86 @@
+Que los campos sean editables. Osea que puedas crear un campo nuevo y ponerle los puntos que quieras.
+
+Plan: Acciones personalizables por usuario                                                                                                                                                         │
+     │                                                                                                                                                                                                    │
+     │ Contexto                                                                                                                                                                                           │
+     │                                                                                                                                                                                                    │
+     │ Actualmente las 3 acciones (gym, creatina, skincare) están hardcodeadas en PREDEFINED_ACTIONS. El usuario quiere poder crear/editar/eliminar sus propias acciones (max 10) desde una pantalla de   │
+     │ configuración, manteniendo las 3 como default para nuevos usuarios.                                                                                                                                │
+     │                                                                                                                                                                                                    │
+     │ Cambios                                                                                                                                                                                            │
+     │                                                                                                                                                                                                    │
+     │ 1. Backend — Modelo UserAction                                                                                                                                                                     │
+     │                                                                                                                                                                                                    │
+     │ - Reutilizar app/models/action.py: Renombrar modelo Action → UserAction, quitar unique=True de name/description (ya que son per-user), añadir campos emoji (String) y key (slug generado). Añadir  │
+     │ UniqueConstraint("user_id", "key").                                                                                                                                                                │
+     │ - Campos: id, user_id, key, label, emoji, points, position (ordering), created_at                                                                                                                  │
+     │                                                                                                                                                                                                    │
+     │ 2. Backend — Seed de acciones default                                                                                                                                                              │
+     │                                                                                                                                                                                                    │
+     │ - app/core/actions.py: Mantener PREDEFINED_ACTIONS como template de defaults.                                                                                                                      │
+     │ - Crear función seed_default_actions(session, user_id) que inserta las 3 acciones predefinidas para un usuario nuevo si no tiene ninguna.                                                          │
+     │ - Llamarla desde el endpoint GET /dashboard la primera vez (si el usuario no tiene acciones).                                                                                                      │
+     │                                                                                                                                                                                                    │
+     │ 3. Backend — Endpoints CRUD /api/v1/actions                                                                                                                                                        │
+     │                                                                                                                                                                                                    │
+     │ - app/api/v1/endpoints/actions.py (actualmente vacío/stub):                                                                                                                                        │
+     │   - GET / → lista acciones del usuario (ordenadas por position)                                                                                                                                    │
+     │   - POST / → crear acción (validar max 10)                                                                                                                                                         │
+     │   - PUT /{action_id} → editar acción (label, emoji, points)                                                                                                                                        │
+     │   - DELETE /{action_id} → eliminar acción                                                                                                                                                          │
+     │   - PUT /reorder → actualizar posiciones (opcional, v2)                                                                                                                                            │
+     │                                                                                                                                                                                                    │
+     │ 4. Backend — Adaptar Dashboard                                                                                                                                                                     │
+     │                                                                                                                                                                                                    │
+     │ - app/api/v1/endpoints/dashboard.py: En vez de leer de PREDEFINED_ACTIONS, consultar UserAction del usuario.                                                                                       │
+     │   - get_dashboard: query UserActions del user → construir ActionStatus                                                                                                                             │
+     │   - toggle_action: validar que el action_key pertenece al usuario                                                                                                                                  │
+     │   - _compute_total_points: join con UserAction para obtener puntos                                                                                                                                 │
+     │   - get_history: igual, usar UserAction para puntos y max_daily                                                                                                                                    │
+     │                                                                                                                                                                                                    │
+     │ 5. Backend — Schemas                                                                                                                                                                               │
+     │                                                                                                                                                                                                    │
+     │ - app/schemas/action.py (nuevo):                                                                                                                                                                   │
+     │   - ActionCreate(label, emoji, points)                                                                                                                                                             │
+     │   - ActionUpdate(label?, emoji?, points?)                                                                                                                                                          │
+     │   - ActionOut(id, key, label, emoji, points)                                                                                                                                                       │
+     │                                                                                                                                                                                                    │
+     │ 6. Frontend — Pantalla "Configurar acciones"                                                                                                                                                       │
+     │                                                                                                                                                                                                    │
+     │ - Nuevo componente frontend/src/components/ActionsConfig.tsx:                                                                                                                                      │
+     │   - Lista de acciones del usuario con emoji, label, puntos                                                                                                                                         │
+     │   - Botón "Añadir acción" (deshabilitado si ya hay 10)                                                                                                                                             │
+     │   - Cada acción tiene botones editar/eliminar                                                                                                                                                      │
+     │   - Modal para crear/editar con campos: emoji (text input), nombre, puntos (number input)                                                                                                          │
+     │                                                                                                                                                                                                    │
+     │ 7. Frontend — Navegación                                                                                                                                                                           │
+     │                                                                                                                                                                                                    │
+     │ - App.tsx: Añadir page "config" al tipo Page                                                                                                                                                       │
+     │ - BottomNav.tsx: Añadir tab de configuración (icono engranaje)                                                                                                                                     │
+     │                                                                                                                                                                                                    │
+     │ 8. Frontend — Dashboard y Calendar                                                                                                                                                                 │
+     │                                                                                                                                                                                                    │
+     │ - Dashboard.tsx: Ya es dinámico (itera data.actions), no necesita cambios                                                                                                                          │
+     │ - Calendar.tsx: Eliminar ACTION_EMOJIS hardcodeado, usar datos del API                                                                                                                             │
+     │                                                                                                                                                                                                    │
+     │ Archivos a modificar                                                                                                                                                                               │
+     │                                                                                                                                                                                                    │
+     │ - app/models/action.py — reescribir modelo                                                                                                                                                         │
+     │ - app/core/actions.py — añadir seed function                                                                                                                                                       │
+     │ - app/api/v1/endpoints/actions.py — CRUD endpoints                                                                                                                                                 │
+     │ - app/api/v1/endpoints/dashboard.py — usar UserAction en vez de PREDEFINED_ACTIONS                                                                                                                 │
+     │ - app/schemas/action.py (nuevo) — schemas Pydantic                                                                                                                                                 │
+     │ - app/main.py — ya importa models.action, OK                                                                                                                                                       │
+     │ - frontend/src/components/ActionsConfig.tsx (nuevo) — pantalla config                                                                                                                              │
+     │ - frontend/src/components/BottomNav.tsx — añadir tab config                                                                                                                                        │
+     │ - frontend/src/components/Calendar.tsx — quitar ACTION_EMOJIS hardcodeado                                                                                                                          │
+     │ - frontend/src/App.tsx — añadir page config                                                                                                                                                        │
+     │                                                                                                                                                                                                    │
+     │ Verificación                                                                                                                                                                                       │
+     │                                                                                                                                                                                                    │
+     │ 1. make docker-up y verificar que la tabla se crea                                                                                                                                                 │
+     │ 2. Registrar usuario nuevo → verificar que aparecen las 3 acciones default                                                                                                                         │
+     │ 3. Ir a configuración → crear, editar, eliminar acciones                                                                                                                                           │
+     │ 4. Verificar que el Dashboard muestra las acciones del usuario                                                                                                                                     │
+     │ 5. Verificar que el Calendar calcula puntos correctamente                                                                                                                                          │
+     │ 6. Verificar max 10 acciones     
