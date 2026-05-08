@@ -112,7 +112,7 @@ export default function Calendar() {
       : "Sin actividad";
 
     cells.push(
-      <Tooltip key={day} label={tooltipText} withArrow position="top">
+      <Tooltip key={day} label={tooltipText} withArrow position="top" events={{ hover: true, focus: true, touch: true }}>
         <div
           style={{
             aspectRatio: "1",
