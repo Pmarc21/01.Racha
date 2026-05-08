@@ -19,7 +19,7 @@ export default function App() {
     <>
       <Container size={page === "menu" ? "md" : "xs"} py="xl" pb={80}>
         <Group justify="space-between" align="center" mb="xl">
-          <Title order={1}>Racha</Title>
+          <Title order={1}>RachaApp</Title>
           <Button variant="light" color="gray" size="sm" onClick={logout}>
             Cerrar sesión
           </Button>
