@@ -135,7 +135,7 @@ export default function Calendar({onSelectDate, selectedDate}: {
               : isToday                                                                                                                                                                                                      
               ? "2px solid var(--mantine-color-green-5)"
               : "1px solid rgba(255,255,255,0.06)",
-            cursor: "default",
+            cursor: isFuture ? "default" : "pointer",
             opacity: isFuture ? 0.3 : 1,
             fontSize: "0.8rem",
             fontWeight: isToday ? 700 : 400,
