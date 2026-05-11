@@ -1,4 +1,5 @@
 import { useState } from "react";
+import dayjs from "dayjs";
 import { Container, Title, Button, Group } from "@mantine/core";
 import Dashboard from "./components/Dashboard";
 import Calendar from "./components/Calendar";
@@ -9,6 +10,7 @@ export type Page = "main" | "calendar" | "menu";
 
 export default function App() {
   const [page, setPage] = useState<Page>("main");
+  const [selectedDate, setSelectedDate] = useState(dayjs().format("YYYY-MM-DD"));
 
   const logout = () => {
     localStorage.removeItem("access_token");
@@ -24,8 +26,16 @@ export default function App() {
             Cerrar sesión
           </Button>
         </Group>
-        {page === "main" && <Dashboard />}
-        {page === "calendar" && <Calendar />}
+        {page === "main" && <Dashboard selectedDate={selectedDate} />}
+        {page === "calendar" && (
+          <Calendar
+            selectedDate={selectedDate}
+            onSelectDate={(date) => {
+              setSelectedDate(date);
+              setPage("main");
+            }}
+          />
+        )}
         {page === "menu" && <MenuPage />}
       </Container>
       <BottomNav active={page} onChange={setPage} />

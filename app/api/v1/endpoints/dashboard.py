@@ -42,6 +42,7 @@ async def _today_completions(session: AsyncSession, user_id) -> set[str]:
 @router.get("", response_model=DashboardResponse)
 async def get_dashboard(
     user: User = Depends(current_active_user),
+    target_date: date | None = None,
     session: AsyncSession = Depends(get_async_session),
 ):
     completed_today = await _today_completions(session, user.id)
@@ -62,7 +63,7 @@ async def get_dashboard(
         ))
 
     return DashboardResponse(
-        date=date.today(),
+        date=target_date,
         actions=actions,
         today_points=today_points,
         total_points=total_points,
@@ -112,19 +113,21 @@ async def get_history(
 async def toggle_action(
     action_key: str,
     user: User = Depends(current_active_user),
+    target_date: date | None = None,
     session: AsyncSession = Depends(get_async_session),
 ):
     if action_key not in PREDEFINED_ACTIONS:
         raise HTTPException(status_code=400, detail=f"Acción '{action_key}' no existe")
 
-    today = date.today()
+    if not target_date or target_date > date.today():
+        target_date = date.today()
 
     existing = await session.execute(
         select(ActionCompletion)
         .where(
             ActionCompletion.user_id == user.id,
             ActionCompletion.action_key == action_key,
-            ActionCompletion.date == today,
+            ActionCompletion.date == target_date,
         )
     )
     row = existing.scalar_one_or_none()
@@ -133,7 +136,7 @@ async def toggle_action(
         await session.delete(row)
         completed = False
     else:
-        session.add(ActionCompletion(user_id=user.id, action_key=action_key, date=today))
+        session.add(ActionCompletion(user_id=user.id, action_key=action_key, date=target_date))
         completed = True
 
     await session.commit()

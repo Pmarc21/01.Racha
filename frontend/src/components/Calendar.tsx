@@ -40,7 +40,10 @@ function getColor(points: number, max: number): string {
   return "rgba(139, 92, 246, 0.85)";
 }
 
-export default function Calendar() {
+export default function Calendar({onSelectDate, selectedDate}: {
+  onSelectDate: (date: string) => void;
+  selectedDate: string | null;
+}) {
   const [current, setCurrent] = useState(dayjs());
   const [history, setHistory] = useState<HistoryData | null>(null);
   const [loading, setLoading] = useState(true);
@@ -110,10 +113,16 @@ export default function Calendar() {
     const tooltipText = tooltipLines?.length
       ? `${pts} pts — ${tooltipLines.join(", ")}`
       : "Sin actividad";
-
+    const isSelected = selectedDate === current.date(day).format("YYYY-MM-DD");
     cells.push(
       <Tooltip key={day} label={tooltipText} withArrow position="top" events={{ hover: true, focus: true, touch: true }}>
         <div
+        onClick={() => {
+      if (!isFuture) {                                                                                                                                                                                             
+        const dateStr = current.date(day).format("YYYY-MM-DD");
+        onSelectDate(dateStr);                                                                                                                                                                                     
+      }
+    }} 
           style={{
             aspectRatio: "1",
             borderRadius: 8,
@@ -121,8 +130,10 @@ export default function Calendar() {
             alignItems: "center",
             justifyContent: "center",
             background: isFuture ? "transparent" : getColor(pts, maxPts),
-            border: isToday
-              ? "2px solid var(--mantine-color-violet-5)"
+            border: isSelected
+              ? "2px solid var(--mantine-color-violet-4)"
+              : isToday                                                                                                                                                                                                      
+              ? "2px solid var(--mantine-color-green-5)"
               : "1px solid rgba(255,255,255,0.06)",
             cursor: "default",
             opacity: isFuture ? 0.3 : 1,

@@ -11,7 +11,11 @@ import {
   Loader,
   Alert,
 } from "@mantine/core";
+import dayjs from "dayjs";
+import "dayjs/locale/es";
 import { apiFetch } from "../api";
+
+dayjs.locale("es");
 
 type ActionStatus = {
   key: string;
@@ -28,15 +32,16 @@ type DashboardData = {
   total_points: number;
 };
 
-export default function Dashboard() {
+export default function Dashboard({ selectedDate }: { selectedDate: string }) {
   const [data, setData] = useState<DashboardData | null>(null);
   const [loading, setLoading] = useState(true);
   const [toggling, setToggling] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchDashboard = async () => {
+  const fetchDashboard = async (date: string) => {
+    setLoading(true);
     try {
-      const res = await apiFetch("/api/v1/dashboard");
+      const res = await apiFetch(`/api/v1/dashboard?target_date=${date}`);
       setData(res);
       setError(null);
     } catch {
@@ -47,8 +52,8 @@ export default function Dashboard() {
   };
 
   useEffect(() => {
-    fetchDashboard();
-  }, []);
+    fetchDashboard(selectedDate);
+  }, [selectedDate]);
 
   const handleToggle = async (actionKey: string) => {
     if (!data) return;
@@ -63,7 +68,7 @@ export default function Dashboard() {
     });
 
     try {
-      const res = await apiFetch(`/api/v1/dashboard/${actionKey}/toggle`, {
+      const res = await apiFetch(`/api/v1/dashboard/${actionKey}/toggle?target_date=${selectedDate}`, {
         method: "POST",
       });
       setData((prev) =>
@@ -80,7 +85,7 @@ export default function Dashboard() {
       );
     } catch {
       // Revert optimistic update
-      fetchDashboard();
+      fetchDashboard(selectedDate);
     } finally {
       setToggling(null);
     }
@@ -111,7 +116,7 @@ export default function Dashboard() {
         <Group justify="space-between" align="center">
           <div>
             <Text size="sm" c="dimmed" fw={500}>
-              Puntos hoy
+              {selectedDate === dayjs().format("YYYY-MM-DD") ? "Puntos hoy" : "Puntos del día"}
             </Text>
             <Title order={2}>{data.today_points}</Title>
           </div>
@@ -129,7 +134,9 @@ export default function Dashboard() {
       {/* Actions */}
       <Stack gap="sm">
         <Text size="sm" c="dimmed" fw={500}>
-          Acciones de hoy
+          {selectedDate === dayjs().format("YYYY-MM-DD")
+            ? "Acciones de hoy"
+            : `Acciones del ${dayjs(selectedDate).format("D [de] MMMM YYYY")}`}
         </Text>
         {data.actions.map((action) => (
           <Paper key={action.key} withBorder p="md" radius="md">
